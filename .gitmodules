@@ -1,0 +1,9 @@
+[submodule "libremidi"]
+	path = libremidi
+	url = git@github.com:celtera/libremidi.git
+[submodule "rtmidi"]
+	path = rtmidi
+	url = git@github.com:thestk/rtmidi.git
+[submodule "imgui"]
+	path = imgui
+	url = https://github.com/ocornut/imgui.git
