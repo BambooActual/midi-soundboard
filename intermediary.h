@@ -24,13 +24,15 @@ struct ConfigurationVariables
 
 	int MuteSoundboard = -1;
 	int PlayLastSound = -1;
+
+	int MidiPort = 1;
 };
 extern struct ConfigurationVariables *Configs;
 // #endif
 
 // int getOutputDevices();
 
-int changeConfig(std::string Configuration);
+int changeConfig(std::string ValueToChange, std::string NewValue);
 
 int initializeApplication();
 

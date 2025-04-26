@@ -189,9 +189,9 @@ int createWindow()
 						std::string MicOutName = PossibleOutputs[i] + "##Mic";
 						if (ImGui::MenuItem(MicOutName.c_str()))
 						{
-							std::cout << PossibleOutputs[i].c_str() << '\n';
+							std::cout << "New Microphone Output: " << PossibleOutputs[i].c_str() << '\n';
 
-							// changeConfig("OutputMicrophone, " + PossibleOutputs[i]);
+							changeConfig("MicrophoneOutput", PossibleOutputs[i].c_str());
 						}
 					}
 					ImGui::EndMenu();
@@ -204,7 +204,9 @@ int createWindow()
 						std::string PlaybackName = PossibleOutputs[i] + "##Playback";
 						if (ImGui::MenuItem(PlaybackName.c_str()))
 						{
-							// Logic
+							std::cout << "New Playback Device: " << PossibleOutputs[i].c_str() << '\n';
+
+							changeConfig("PlaybackOutput", PossibleOutputs[i].c_str());
 						}
 					}
 					ImGui::EndMenu();
@@ -379,16 +381,6 @@ int createWindow()
             ImGui::End();
 		}
 
-        // 3. Show another simple window.
-        // if (show_another_window)
-        // {
-        //     ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-        //     ImGui::Text("Hello from another window!");
-        //     if (ImGui::Button("Close Me"))
-        //         show_another_window = false;
-        //     ImGui::End();
-        // }
-
         // Rendering
         ImGui::Render();
         int display_w, display_h;
@@ -399,6 +391,9 @@ int createWindow()
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(window);
+
+		if (Done == true)
+			glfwSetWindowShouldClose(window, true);
     }
 #ifdef __EMSCRIPTEN__
     EMSCRIPTEN_MAINLOOP_END;

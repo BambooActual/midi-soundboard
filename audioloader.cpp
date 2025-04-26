@@ -16,7 +16,7 @@ std::vector<std::string> getSoundNames()
 
 	for (const auto & Entry : std::filesystem::directory_iterator(SoundDirectory))
 	{
-		std::cout << Entry.path().filename() << std::endl;
+		// std::cout << Entry.path().filename() << std::endl;
 
 		auto pos = ListOfSounds.end();
 		ListOfSounds.insert(pos, Entry.path().filename());

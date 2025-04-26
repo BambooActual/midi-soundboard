@@ -19,6 +19,7 @@ static void finish(int ignore)
 
 int main()
 {
+	std::cout << "Starting Soundboard...\n";
 	if (initializeApplication() == -1)
 	{
 		std::cout << "Soundboard Failed To Find or Create Required Directories!" << '\n';
@@ -26,8 +27,8 @@ int main()
 		return -1;	/* In the case that directory for saved data
 					   couldn't be found or created close application. */
 	}
-	// std::jthread Window(createWindow);	// Opens a window for the application.
-	// std::thread SoundThread;
+	std::jthread Window(createWindow);	// Opens a window for the application.
+	std::jthread SoundThread;
 	// std::thread SoundThread(prepPlayers);
 
 
@@ -43,7 +44,7 @@ int main()
 	int PortCount = MidiIn->getPortCount();
 	if (PortCount == 0)
 	{
-		std::cout << "No Ports!\n";
+		std::cout << "No Active Midi Inputs Found!\n";
 
 		delete MidiIn;
 		return 1;	// General fail
@@ -51,11 +52,12 @@ int main()
 	
 	for (i = 0; i < PortCount; i++)
 	{
-		std::cout << MidiIn->getPortName(i) << std::endl;
+		std::cout << "Found Midi Input: " << MidiIn->getPortName(i) << std::endl;
 	}
 
 	// Open port for input reading.
-	MidiIn->openPort(1);
+	MidiIn->openPort(Configs->MidiPort);
+	std::cout << "Reading Input from MIDI Port: " << Configs->MidiPort << '\n';
 	MidiIn->ignoreTypes(false, false, false);
 
 	Done = false;
@@ -64,6 +66,12 @@ int main()
 	// Read midi input.
 	while (!Done)
 	{
+		// Play on loop for debugging
+		// SoundEffect = KeyMap[0].c_str();
+		// SoundThread1 = std::jthread{playSound, SoundEffect};
+		// std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		// std::jthread SoundInstace(playSound, SoundEffect);
+
 		MidiIn->getMessage(&Message);
 		Bytes = Message.size();
 
@@ -79,13 +87,11 @@ int main()
 		// Play sound on another thread to enable multiple simultaneous sounds
 		const char *Output = (char *)"VirtualMic";
 
-		std::jthread SoundInstace(playSound, SoundEffect);
-		SoundInstace.detach();
+		// SoundThread1 = std::jthread{playSound, SoundEffect};
+		std::jthread SoundInstance(playSound, SoundEffect);
+		SoundInstance.detach();
 
-		// std::thread SoundThread(playSound, SoundEffect);
 		std::cout << "Played sound\n";
-
-		// std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 
 	// Close application.
