@@ -2,9 +2,9 @@
 #include "soundplayer.h"
 // #include "audioloader.h"
 // #include "soundplayer.h"
-#include <filesystem>
-#include <map>
-#include <string>
+// #include <filesystem>
+// #include <map>
+// #include <string>
 
 #define GET_VARIABLE_NAME(Variable)(#Variable)
 
@@ -49,13 +49,19 @@ void initializeConfigFile()
 	return;
 }
 
-int changeConfig(std::string Configuration)
+int changeConfig(std::string ValueToChange, std::string NewValue)
 {
+	std::vector<std::string> FileLines = {};
+
 	std::ifstream ConfigFileIn;
 	std::string Line;
 	std::string Variable;
+	std::string VariableToChange;
 	std::string Value;
-	int VariableLine;
+
+	int i = 0;
+	int LinePos = 0;
+	int VariableLinePos = 0;
 	// std::ofstream ConfigFile;
 	ConfigFileIn.open(ConfigPath);
 
@@ -63,25 +69,34 @@ int changeConfig(std::string Configuration)
 	{
 		if (Line.size() == 0)
 		{
-			VariableLine++;
+			FileLines.push_back(Line);
+			LinePos++;
 			continue;
 		}
 		if (Line.at(0) == '#')
 		{
-			VariableLine++;
+			FileLines.push_back(Line);
+			LinePos++;
 			continue;
 		}
+		FileLines.push_back(Line);
+
 		// Get Variable name
-		int Start = Line.find_first_not_of(" ");
-		int EqualSign = Line.find_first_of("=");
-		Variable = Line.substr(Start, EqualSign - Start - 1);
+		int VarStart = Line.find_first_not_of(" ");
+		int VarEnd = Line.find_first_of(" ");
+		Variable = Line.substr(VarStart, VarEnd - VarStart);
 
-		// Get Value of Variable
-		int ValueStart = Line.substr(EqualSign + 2).find_first_not_of(" ") + EqualSign;
-		int ValueEnd = Line.find_last_not_of(" ");
-		Value = Line.substr(ValueStart + 2, ValueEnd - ValueStart + 1);
-		Value = (Value.at(0) == '\"') ? Value.substr(1, Value.find_last_of('\"') - 1) : Value;
+		// VariableLinePos = (int)ConfigFileIn.tellg();
+		// std::cout << VariableLinePos << '\n';
 
+		if (Variable == ValueToChange)
+		{
+			VariableLinePos = LinePos;
+			ValueToChange = Variable;
+		}
+
+		LinePos++;
+		i++;
 	}
 	ConfigFile.close();
 
@@ -90,9 +105,24 @@ int changeConfig(std::string Configuration)
 
 	if(!ConfigFile.is_open()) return -1;
 
-	ConfigFile << '{' << Configuration << "},\n";
+	for (int i = 0; i < FileLines.size(); i++)
+	{
+		if (i == VariableLinePos)
+		{
+			ConfigFile << ValueToChange << " = " << '\"' << NewValue << "\"\n";
+			continue;
+		}
 
+		ConfigFile << FileLines[i] << '\n';
+	}
 	ConfigFile.close();
+
+	if (ValueToChange == "MicrophoneOutput")
+		Configs->MicrophoneOutput = NewValue;
+
+	if (ValueToChange == "PlaybackOutput")
+		Configs->PlaybackOutput = NewValue;
+
 	return 0;
 }
 
@@ -112,25 +142,26 @@ void loadConfig()
 		if (Line.at(0) == '#') continue;
 
 		// Get Variable name
-		int Start = Line.find_first_not_of(" ");
+		int VarStart = Line.find_first_not_of(" ");
+		int VarEnd = Line.find_first_of(" ");
 		int EqualSign = Line.find_first_of("=");
-		Variable = Line.substr(Start, EqualSign - Start - 1);
-		// std::cout << Variable << "-\n";
+		Variable = Line.substr(VarStart, VarEnd - VarStart);
+		// std::cout << Variable << "\n";
 
 		// Get Value of Variable
 		int ValueStart = Line.substr(EqualSign + 2).find_first_not_of(" ") + EqualSign;
 		int ValueEnd = Line.find_last_not_of(" ");
 		Value = Line.substr(ValueStart + 2, ValueEnd - ValueStart + 1);
 		Value = (Value.at(0) == '\"') ? Value.substr(1, Value.find_last_of('\"') - 1) : Value;
-		// std::cout << Value << "-\n";
+		// std::cout << Value << "\n";
 
 		if (Variable == "MicrophoneOutput")
 			Configs->MicrophoneOutput = Value;
 		if (Variable == "PlaybackOutput")
 			Configs->PlaybackOutput = Value;
-		if (Variable == "MuteSoundboard")
+		if (Variable == "MuteSoundboard" && Value != "")
 			Configs->MuteSoundboard = std::stoi(Value);
-		if (Variable == "PlayLastSound")
+		if (Variable == "PlayLastSound" && Value != "")
 			Configs->PlayLastSound = std::stoi(Value);
 	}
 	ConfigFileIn.close();

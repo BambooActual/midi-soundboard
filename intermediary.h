@@ -30,7 +30,7 @@ extern struct ConfigurationVariables *Configs;
 
 // int getOutputDevices();
 
-int changeConfig(std::string Configuration);
+int changeConfig(std::string ValueToChange, std::string NewValue);
 
 int initializeApplication();
 

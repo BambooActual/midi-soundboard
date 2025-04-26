@@ -26,7 +26,7 @@ int main()
 		return -1;	/* In the case that directory for saved data
 					   couldn't be found or created close application. */
 	}
-	// std::jthread Window(createWindow);	// Opens a window for the application.
+	std::jthread Window(createWindow);	// Opens a window for the application.
 	// std::thread SoundThread;
 	// std::thread SoundThread(prepPlayers);
 

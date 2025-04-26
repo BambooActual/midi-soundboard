@@ -189,9 +189,9 @@ int createWindow()
 						std::string MicOutName = PossibleOutputs[i] + "##Mic";
 						if (ImGui::MenuItem(MicOutName.c_str()))
 						{
-							std::cout << PossibleOutputs[i].c_str() << '\n';
+							std::cout << "New Microphone Output: " << PossibleOutputs[i].c_str() << '\n';
 
-							// changeConfig("OutputMicrophone, " + PossibleOutputs[i]);
+							changeConfig("MicrophoneOutput", PossibleOutputs[i].c_str());
 						}
 					}
 					ImGui::EndMenu();
@@ -204,7 +204,9 @@ int createWindow()
 						std::string PlaybackName = PossibleOutputs[i] + "##Playback";
 						if (ImGui::MenuItem(PlaybackName.c_str()))
 						{
-							// Logic
+							std::cout << "New Playback Device: " << PossibleOutputs[i].c_str() << '\n';
+
+							changeConfig("PlaybackOutput", PossibleOutputs[i].c_str());
 						}
 					}
 					ImGui::EndMenu();
