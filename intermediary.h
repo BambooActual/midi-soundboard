@@ -24,6 +24,8 @@ struct ConfigurationVariables
 
 	int MuteSoundboard = -1;
 	int PlayLastSound = -1;
+
+	int MidiPort = 1;
 };
 extern struct ConfigurationVariables *Configs;
 // #endif

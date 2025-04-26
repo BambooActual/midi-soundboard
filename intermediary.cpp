@@ -14,18 +14,6 @@
 // int PlayLastSound;
 std::ofstream ConfigFile;
 
-// #ifndef GENERAL_H_
-// #define GENERAL_H_
-// // template<typename Var>
-// struct ConfigurationVariables
-// {
-// 	std::string MicrophoneOutput = "";
-// 	std::string PlaybackOutput = "";
-//
-// 	int MuteSoundboard = -1;
-// 	int PlayLastSound = -1;
-// };
-//
 ConfigurationVariables *Configs = new ConfigurationVariables();
 // #endif
 
@@ -44,6 +32,10 @@ void initializeConfigFile()
 	ConfigFile << "# Bindings" << '\n';
 	ConfigFile << "MuteSoundboard   = \"\"" << '\n';
 	ConfigFile << "PlayLastSound    = \"\"" << '\n';
+
+	ConfigFile << '\n';
+	// ConfigFile << "# Midi Port" << '\n';
+	ConfigFile << "MidiPort   = \"\"" << '\n';
 
 	ConfigFile.close();
 	return;
@@ -163,6 +155,8 @@ void loadConfig()
 			Configs->MuteSoundboard = std::stoi(Value);
 		if (Variable == "PlayLastSound" && Value != "")
 			Configs->PlayLastSound = std::stoi(Value);
+		if (Variable == "MidiPort" && Value != "")
+			Configs->MidiPort = std::stoi(Value);
 	}
 	ConfigFileIn.close();
 }
@@ -256,7 +250,7 @@ int initializeApplication()
 	// std::string MidiMapPath;
 	bool ConfigExists = std::filesystem::exists(ContentDirectory);
 
-	prepPlayers();
+	// prepPlayers();
 	getOutputDevices();
 
 	if (std::getenv("XDG_DATA_HOME") != NULL)
@@ -274,6 +268,8 @@ int initializeApplication()
 
 	if (ConfigExists)
 	{
+		std::cout << "Directory Found\n";
+
 		// loadConfig(ContentDirectory, MidiMapPath);
 		SoundDirectory = ContentDirectory + "sounds/";
 		MidiMapPath = std::string(ContentDirectory + "midimap.csv");
@@ -293,7 +289,7 @@ int initializeApplication()
 			initializeConfigFile();
 		}
 
-		std::cout << "Directory Found\n";
+		// std::cout << "Directory Found\n";
 		return 0;	// Config exists and was found
 	}
 	else

@@ -12,3 +12,4 @@ Thing I need to do.
 -[] Sound importing
 -[] Adding sound directories
 -[] Rewrite config string checking
+-[] Add Midi port configuration
