@@ -40,6 +40,6 @@ void bindSoundToKey(std::string SoundName, int KeyCode);
 
 void importSound();
 
-int writeMidimap(std::string InMapping);
+int addMidimapping(std::string InMapping);
 
 int loadMidimap();

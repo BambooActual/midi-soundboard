@@ -174,6 +174,8 @@ int createWindow()
 				if (ImGui::MenuItem("Import"))
 				{
 					// Import Sound
+					importSound();
+					LoadedSoundEffects = getSoundNames();
 				}
 
 				ImGui::EndMenu();
@@ -320,39 +322,6 @@ int createWindow()
 
 				ImGui::EndMenu();
 			}
-
-			// if (ImGui::BeginMenu("Output"))
-			// {
-			// 	// PossibleOutputs = getOutputDevices();
-			// 	if (ImGui::BeginMenu("Microphone"))
-			// 	{
-			// 		for (int i = 0; i < PossibleOutputs.size(); i++)
-			// 		{
-			// 			std::string MicOutName = PossibleOutputs[i] + "##Mic";
-			// 			if (ImGui::MenuItem(MicOutName.c_str()))
-			// 			{
-			// 				std::cout << PossibleOutputs[i].c_str() << '\n';
-			//
-			// 				// changeConfig("OutputMicrophone, " + PossibleOutputs[i]);
-			// 			}
-			// 		}
-			// 		ImGui::EndMenu();
-			// 	}
-
-				// if (ImGui::BeginMenu("Playback"))
-				// {
-				// 	for (int i = 0; i < PossibleOutputs.size(); i++)
-				// 	{
-				// 		std::string PlaybackName = PossibleOutputs[i] + "##Playback";
-				// 		if (ImGui::MenuItem(PlaybackName.c_str()))
-				// 		{
-				// 			// Logic
-				// 		}
-				// 	}
-				// 	ImGui::EndMenu();
-				// }
-				// ImGui::EndMenu();
-			// }
 			ImGui::EndMenuBar();
 
             ImGui::End();

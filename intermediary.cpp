@@ -1,5 +1,6 @@
 #include "intermediary.h"
 #include "soundplayer.h"
+#include <cstdio>
 // #include "audioloader.h"
 // #include "soundplayer.h"
 // #include <filesystem>
@@ -164,19 +165,30 @@ void loadConfig()
 void bindSoundToKey(std::string SoundName, int KeyCode)
 {
 	KeyMap.insert({KeyCode, SoundDirectory + SoundName});
-	writeMidimap(std::to_string(KeyCode) + ", " + SoundDirectory + SoundName);
+	addMidimapping(std::to_string(KeyCode) + ", " + SoundDirectory + SoundName);
 }
 
 void importSound()
 {
-	std::string ImportedFile;
-	std::filesystem::path ImportPath;
-	std::filesystem::copy_file(ImportPath, SoundDirectory);
+	std::string ImportablePath;
+	char FilePath[1024];
 
-	ImportedFile = ImportPath.filename();
+	FILE *File = popen("zenity --file-selection", "r");
+	fgets(FilePath, 1024, File);
+	ImportablePath = FilePath;
+	ImportablePath = ImportablePath.substr(0, ImportablePath.size() - 1);
+
+	std::string FileName = FilePath;
+	FileName = FileName.substr(FileName.rfind("/") + 1);
+
+	std::filesystem::path From = ImportablePath;
+	std::filesystem::path To = SoundDirectory + FileName;
+	std::filesystem::copy_file(From, To);
+
+	std::cout << "Imported Sound: " << FileName;
 }
 
-int writeMidimap(std::string InMapping)
+int addMidimapping(std::string InMapping)
 {
 	std::ofstream Midimap;
 	Midimap.open(MidiMapPath, std::ios::app);
