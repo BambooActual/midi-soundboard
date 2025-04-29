@@ -22,7 +22,7 @@ void setOutputDevice(libvlc_media_player_t *MediaPlayer, char *OutputDevice)
 		libvlc_audio_output_device_set(MediaPlayer, NULL, OutputDevice);
 
 	if (libvlc_audio_output_device_get(MediaPlayer) != OutputDevice)
-		libvlc_audio_set_volume(MediaPlayer, 85);
+		libvlc_audio_set_volume(MediaPlayer, 30);
 }
 
 void prepPlayers()
@@ -97,6 +97,8 @@ void playSound(const char *AudioClipPath)
 	}
 	while (libvlc_media_player_is_playing(MediaPlayerMic)) continue;
 
+	// Wait a bit longer just to be safe
+	std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	// libvlc_media_player_release(MediaPlayerMic);
 	// libvlc_media_player_release(MediaPlayerMonitor);
 	// libvlc_release(Instance);
@@ -166,15 +168,17 @@ void playSound(const char *AudioClipPath)
 	// while (libvlc_media_player_is_playing(MediaPlayerMic)) continue;
 
 	// Stop players
-	libvlc_media_player_stop(MediaPlayerMic);
-	libvlc_media_player_stop(MediaPlayerMonitor);
+	if (libvlc_media_player_is_playing(MediaPlayerMic))
+		libvlc_media_player_stop(MediaPlayerMic);
+	if (libvlc_media_player_is_playing(MediaPlayerMonitor))
+		libvlc_media_player_stop(MediaPlayerMonitor);
 
 	// Release media
 	if (libvlc_media_get_state(Media) != libvlc_Playing)
 		libvlc_media_release(Media);
 	libvlc_media_player_release(MediaPlayerMic);
 	libvlc_media_player_release(MediaPlayerMonitor);
-	std::cout << "Ended Playback\n";
+	// std::cout << "Ended Playback\n";
 
 	// ActivePlayers--;
 }

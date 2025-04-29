@@ -4,9 +4,6 @@
 // Remove once lsp is fixed or further modifications are not needed!!
 // #include "audioloader.h"
 #include "audioloader.h"
-#include "imgui/imgui.h"
-#include "imgui/backends/imgui_impl_glfw.h"
-#include "imgui/backends/imgui_impl_opengl3.h"
 #include "soundplayer.h"
 #include <string>
 
@@ -166,16 +163,24 @@ int createWindow()
 		ImGui::SetNextWindowSize(ImVec2(ViewportSize.x * (1.0f - ContentRelation), ViewportSize.y - LogBoxSize.y));
 
         {
-            ImGui::Begin("Test Window", NULL, ToolWindowFlags);
+            ImGui::Begin("Sound Effects Window", NULL, ToolWindowFlags);
 
 			ImGui::BeginMenuBar();
 			if (ImGui::BeginMenu("Sounds"))
 			{
 				if (ImGui::MenuItem("Import"))
 				{
-					// Import Sound
-				}
+					ImGui::OpenPopup("Import Sounds");
 
+					// if (ImGui::BeginPopupModal("Import Sounds"))
+					// {
+					// 	// Import Sound
+					// 	importSound();
+					// 	LoadedSoundEffects = getSoundNames();
+					//
+					// 	ImGui::EndPopup();
+					// }
+				}
 				ImGui::EndMenu();
 			}
 
@@ -214,6 +219,18 @@ int createWindow()
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenuBar();
+
+			ImGui::SetNextWindowPos(ImVec2(ViewportSize.x * 0.5f, ViewportSize.y * 0.5f));
+			ImGui::SetNextWindowSize(ImVec2(200, 100));
+
+			if (ImGui::BeginPopupModal("Import Sounds"))
+			{
+				// Import Sound
+				importSound();
+				LoadedSoundEffects = getSoundNames();
+
+				ImGui::EndPopup();
+			}
 
 			// if (ImGui::TreeNode("Test Tree"))
 			// {
@@ -257,11 +274,18 @@ int createWindow()
 					ImGui::SetCursorPos(CursorPosition);
 
 					std::string ButtonName;
-					ButtonName = "Bind Key##";
+					std::string MidiKey;
+					bool SoundIsBound = SoundBindings.contains(LoadedSoundEffects[i]);
+					if (SoundIsBound)
+						MidiKey = std::to_string(SoundBindings.at(LoadedSoundEffects[i]));
+					ButtonName = (SoundIsBound) ? "MIDI: [" + MidiKey + "]##" : "[Not Bound]##";
 					ButtonName += std::to_string(i);
+
 					if (ImGui::Button(ButtonName.c_str(), ImVec2(90, 50)))
 					{
 						// Bind key to sound effect
+						int NewKey = awaitInput();
+						bindSoundToKey(NewKey, LoadedSoundEffects[i]);
 					}
 
 					CursorPosition.x += 100;
@@ -293,6 +317,7 @@ int createWindow()
             ImGui::End();
         }
 
+
 	// ===================================================================================== //
 	// ============================== Browser Content Window =============================== //
 	// ===================================================================================== //
@@ -320,39 +345,6 @@ int createWindow()
 
 				ImGui::EndMenu();
 			}
-
-			// if (ImGui::BeginMenu("Output"))
-			// {
-			// 	// PossibleOutputs = getOutputDevices();
-			// 	if (ImGui::BeginMenu("Microphone"))
-			// 	{
-			// 		for (int i = 0; i < PossibleOutputs.size(); i++)
-			// 		{
-			// 			std::string MicOutName = PossibleOutputs[i] + "##Mic";
-			// 			if (ImGui::MenuItem(MicOutName.c_str()))
-			// 			{
-			// 				std::cout << PossibleOutputs[i].c_str() << '\n';
-			//
-			// 				// changeConfig("OutputMicrophone, " + PossibleOutputs[i]);
-			// 			}
-			// 		}
-			// 		ImGui::EndMenu();
-			// 	}
-
-				// if (ImGui::BeginMenu("Playback"))
-				// {
-				// 	for (int i = 0; i < PossibleOutputs.size(); i++)
-				// 	{
-				// 		std::string PlaybackName = PossibleOutputs[i] + "##Playback";
-				// 		if (ImGui::MenuItem(PlaybackName.c_str()))
-				// 		{
-				// 			// Logic
-				// 		}
-				// 	}
-				// 	ImGui::EndMenu();
-				// }
-				// ImGui::EndMenu();
-			// }
 			ImGui::EndMenuBar();
 
             ImGui::End();
