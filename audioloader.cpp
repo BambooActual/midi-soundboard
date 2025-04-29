@@ -2,10 +2,8 @@
 #include <filesystem>
 #include <iostream>
 
-std::string ContentDirectory;
-std::string SoundDirectory;
-std::string ConfigPath;
-std::string MidiMapPath;
+std::string ContentDirectory, SoundDirectory;
+std::string ConfigPath, MidiMapPath;
 
 
 std::vector<std::string> getSoundNames()

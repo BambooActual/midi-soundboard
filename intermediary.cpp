@@ -357,12 +357,15 @@ int initializeApplication()
 		MidiMapPath = std::string(ContentDirectory + "midimap.csv");
 		ConfigPath = std::string(ContentDirectory + "config.conf");
 
+		std::cout << "Loading Midi Mappings...\n";
 		loadMidimap();
+		std::cout << "Midi Mappings Loaded\n";
 		if (std::filesystem::exists(ContentDirectory + "config.conf") 
 			&& !std::filesystem::is_empty(ContentDirectory + "config.conf"))
 		{
+			std::cout << "Loading Config...\n";
 			loadConfig();
-			std::cout << "Loaded Config\n";
+			std::cout << "Config Loaded\n";
 		}
 		else
 		{
@@ -376,6 +379,7 @@ int initializeApplication()
 	}
 	else
 	{
+		std::cout << "Creating Directory...\n";
 		if (createDirectories() == 0)
 		{
 			std::cout << "Directory Created.\n";
