@@ -5,9 +5,38 @@
 // std::map<int, const char> SoundPath;
 RtMidiIn *MidiIn;
 std::vector<unsigned char> Message;
-int Bytes, i, PortCount;;
+std::vector<std::string> MidiPortNames;
+int Bytes, i, PortCount;
 const char *SoundEffect;
 
+
+std::vector<std::string> getMidiPortNames()
+{
+	// PortCount = MidiIn->getPortCount();
+	//
+	// if (PortCount == 0)
+	// {
+	// 	std::cout << "No Active Midi Inputs Found!\n";
+	//
+	// 	delete MidiIn;
+	// }
+	//
+	// for (i = 0; i < PortCount; i++)
+	// {
+	// 	MidiPortNames.push_back(MidiIn->getPortName(i).c_str());
+	// }
+	return MidiPortNames;
+}
+
+void openPort()
+{
+	MidiIn->closePort();
+
+	// Open port for input reading.
+	MidiIn->openPort(Configs->MidiPort);
+	std::cout << "Reading Input from MIDI Port: " << Configs->MidiPort << '\n';
+	MidiIn->ignoreTypes(false, false, false);
+}
 
 void setUpMidiHandler()
 {
@@ -25,13 +54,11 @@ void setUpMidiHandler()
 	
 	for (i = 0; i < PortCount; i++)
 	{
-		std::cout << "Found Midi Input: " << MidiIn->getPortName(i) << std::endl;
+		// std::cout << "Found Midi Input: " << MidiIn->getPortName(i) << std::endl;
+		MidiPortNames.push_back(MidiIn->getPortName(i));
 	}
 
-	// Open port for input reading.
-	MidiIn->openPort(Configs->MidiPort);
-	std::cout << "Reading Input from MIDI Port: " << Configs->MidiPort << '\n';
-	MidiIn->ignoreTypes(false, false, false);
+	openPort();
 
 	Done = false;
 	// (void) signal(SIGINT, finish);
