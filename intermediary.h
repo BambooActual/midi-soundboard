@@ -12,7 +12,6 @@ extern std::string SoundDirectory;
 extern std::string ConfigPath;
 extern std::string MidiMapPath;
 
-extern std::map<int, std::string> KeyMap;
 
 // #ifndef GENERAL_H_
 // #define GENERAL_H_
@@ -36,10 +35,10 @@ int changeConfig(std::string ValueToChange, std::string NewValue);
 
 int initializeApplication();
 
-void bindSoundToKey(std::string SoundName, int KeyCode);
+void bindSoundToKey(int KeyCode, std::string SoundName);
 
 void importSound();
 
-int addMidimapping(std::string InMapping);
+int addMidimapping(int Key, std::string InMapping);
 
 int loadMidimap();

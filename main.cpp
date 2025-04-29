@@ -1,5 +1,4 @@
-#include "soundplayer.h"
-#include "audioloader.h"
+// #include "soundplayer.h"
 #include "intermediary.h"
 #include "gui.h"
 
@@ -10,6 +9,15 @@
 #include <vector>
 #include "rtmidi/RtMidi.h"
 
+extern std::map<std::string, int> SoundBindings;
+extern std::map<int, std::string> KeyMap;
+
+
+RtMidiIn *MidiIn;
+std::vector<unsigned char> Message;
+int Bytes, i;
+const char *SoundEffect;
+int PortCount;
 
 bool Done;
 static void finish(int ignore)
@@ -33,15 +41,15 @@ int main()
 
 
 	// Declare some midi input variables.
-	RtMidiIn *MidiIn = new RtMidiIn();
-	std::vector<unsigned char> Message;
-	int Bytes, i;
+	MidiIn = new RtMidiIn();
+	// std::vector<unsigned char> Message;
+	// int Bytes, i;
 
-	std::map<int, const char> SoundPath;
-	const char *SoundEffect;
+	// std::map<int, const char> SoundPath;
+	// const char *SoundEffect;
 
 	// Midi input checking
-	int PortCount = MidiIn->getPortCount();
+	PortCount = MidiIn->getPortCount();
 	if (PortCount == 0)
 	{
 		std::cout << "No Active Midi Inputs Found!\n";

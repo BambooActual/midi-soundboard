@@ -7,8 +7,6 @@ std::string SoundDirectory;
 std::string ConfigPath;
 std::string MidiMapPath;
 
-std::map<int, std::string> KeyMap;
-
 
 std::vector<std::string> getSoundNames()
 {
@@ -16,7 +14,7 @@ std::vector<std::string> getSoundNames()
 
 	for (const auto & Entry : std::filesystem::directory_iterator(SoundDirectory))
 	{
-		// std::cout << Entry.path().filename() << std::endl;
+		// std::cout << Entry.path().filename() << '\n';
 
 		auto pos = ListOfSounds.end();
 		ListOfSounds.insert(pos, Entry.path().filename());

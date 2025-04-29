@@ -15,6 +15,9 @@
 // int PlayLastSound;
 std::ofstream ConfigFile;
 
+std::map<int, std::string> KeyMap;
+std::map<std::string, int> SoundBindings;
+
 ConfigurationVariables *Configs = new ConfigurationVariables();
 // #endif
 
@@ -91,7 +94,7 @@ int changeConfig(std::string ValueToChange, std::string NewValue)
 		LinePos++;
 		i++;
 	}
-	ConfigFile.close();
+	ConfigFileIn.close();
 
 
 	ConfigFile.open(ConfigPath);
@@ -162,12 +165,6 @@ void loadConfig()
 	ConfigFileIn.close();
 }
 
-void bindSoundToKey(std::string SoundName, int KeyCode)
-{
-	KeyMap.insert({KeyCode, SoundDirectory + SoundName});
-	addMidimapping(std::to_string(KeyCode) + ", " + SoundDirectory + SoundName);
-}
-
 void importSound()
 {
 	std::string ImportablePath;
@@ -176,31 +173,100 @@ void importSound()
 	FILE *File = popen("zenity --file-selection", "r");
 	fgets(FilePath, 1024, File);
 	ImportablePath = FilePath;
+	if (ImportablePath == "")
+		return;
 	ImportablePath = ImportablePath.substr(0, ImportablePath.size() - 1);
 
 	std::string FileName = FilePath;
-	FileName = FileName.substr(FileName.rfind("/") + 1);
+	FileName = FileName.substr(FileName.rfind("/") + 1, -1);
 
 	std::filesystem::path From = ImportablePath;
 	std::filesystem::path To = SoundDirectory + FileName;
 	std::filesystem::copy_file(From, To);
 
+	bindSoundToKey(-1, SoundDirectory + FileName);
+
 	std::cout << "Imported Sound: " << FileName;
 }
 
-int addMidimapping(std::string InMapping)
+int addMidimapping(int Key, std::string InMapping)
 {
+	std::string MidiMapping = std::to_string(Key) + ", " + InMapping;
 	std::ofstream Midimap;
+
+
 	Midimap.open(MidiMapPath, std::ios::app);
 
 	// If file didn't open, exit with errorcode
 	if (!Midimap.is_open()) return -1;
 
 	// Write to file
-	Midimap << '{' << InMapping << "},\n";
+	Midimap << '{' << MidiMapping << "},\n";
 
 	Midimap.close();
 	return 0;
+}
+
+void removeKeyFromMap(int KeyToRemove)
+{
+	std::string Line;
+	std::ifstream Midimap;
+	std::ofstream MidimapWrite;
+	std::vector<std::string> KeepBinds;
+	Midimap.open(MidiMapPath);
+
+	while (std::getline(Midimap, Line))
+	{
+		int Start = Line.find_first_of('{');
+		int SecondArg = Line.find_first_of(',');
+		// int End = Line.find_first_of('}');
+
+		int KeyCode = std::stoi(Line.substr(Start + 1, SecondArg - 1));
+		if (KeyCode != KeyToRemove)
+			KeepBinds.push_back(Line);
+		// std::string SoundPath = Line.substr(SecondArg + 2, End - SecondArg - 2);
+		// KeyMap.insert({KeyCode, SoundPath});
+
+		// std::string SoundName = SoundPath.substr(SoundPath.rfind('/') + 1);
+		// SoundBindings.insert({SoundName, KeyCode});
+	}
+	Midimap.close();
+
+	MidimapWrite.open(MidiMapPath);
+
+	// If file didn't open, exit with errorcode
+	if (!MidimapWrite.is_open()) return;
+
+	for (int i = 0; i < KeepBinds.size(); i++)
+	{
+		// Write to file
+		MidimapWrite << KeepBinds[i] << '\n';
+		std::cout << KeepBinds[i] << '\n';
+	}
+
+	MidimapWrite.close();
+}
+
+void bindSoundToKey(int KeyCode, std::string SoundName)
+{
+	if (KeyMap.contains(KeyCode))
+	{
+		std::cout << "Couldn't Bind To Key!";
+		std::cout << "Key Already Has a Sound Bound!";
+		return;
+	}
+
+	std::cout << SoundBindings.find(SoundName)->second << '\n';
+	int SoundKey = SoundBindings[SoundName];
+	KeyMap.erase(SoundBindings[SoundName]);
+	SoundBindings.erase(SoundName);
+	removeKeyFromMap(SoundKey);
+
+	KeyMap.insert({KeyCode, SoundDirectory + SoundName});
+	SoundBindings.insert({SoundName, KeyCode});
+	SoundBindings[SoundName] = KeyCode;
+	// std::cout << SoundBindings[SoundName] << '\n';
+	addMidimapping(KeyCode, SoundDirectory + SoundName);
 }
 
 int loadMidimap()
@@ -218,11 +284,15 @@ int loadMidimap()
 		int End = Line.find_first_of('}');
 		int SecondArg = Line.find_first_of(',');
 
-		// std::cout << Line.substr(Start + 1, End - 1) << '\n';
-
 		int KeyCode = std::stoi(Line.substr(Start + 1, SecondArg - 1));
-		KeyMap.insert({KeyCode, Line.substr(SecondArg + 2, End - SecondArg - 2)});
-		// std::cout << Line.substr(SecondArg + 2, End - SecondArg - 2) << '\n';
+		std::string SoundPath = Line.substr(SecondArg + 2, End - SecondArg - 2);
+		KeyMap.insert({KeyCode, SoundPath});
+
+		std::string SoundName = SoundPath.substr(SoundPath.rfind('/') + 1);
+		SoundBindings.insert({SoundName, KeyCode});
+		// SoundBindings[SoundName.c_str()] = KeyCode;
+		// std::cout << SoundBindings[SoundName] << '\n';
+		// std::cout << SoundName << ", " << KeyCode << '\n';
 	}
 
 	Midimap.close();
