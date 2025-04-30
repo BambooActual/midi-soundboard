@@ -1,7 +1,8 @@
 // #include "soundplayer.h"
 #include "intermediary.h"
 // #include "gui.h"
-#include "main-window.hpp"
+// #include "main-window.hpp"
+#include "window.h"
 #include "midi-handler.h"
 // #include "rtmidi/RtMidi.h"
 

@@ -57,7 +57,7 @@ int changeConfig(std::string ValueToChange, std::string NewValue)
 
 	int i = 0;
 	int LinePos = 0;
-	int VariableLinePos = 0;
+	int VariableLinePos = -1;
 	// std::ofstream ConfigFile;
 	ConfigFileIn.open(ConfigPath);
 
@@ -103,30 +103,37 @@ int changeConfig(std::string ValueToChange, std::string NewValue)
 
 	for (int i = 0; i < FileLines.size(); i++)
 	{
-		if (i == VariableLinePos)
+		if (i == VariableLinePos && VariableLinePos != -1)
 		{
 			ConfigFile << ValueToChange << " = " << '\"' << NewValue << "\"\n";
 			continue;
 		}
 
 		ConfigFile << FileLines[i] << '\n';
+
+		if (i == FileLines.size() - 1 && VariableLinePos == -1)
+		{
+			ConfigFile << ValueToChange << " = " << '\"' << NewValue << "\"\n";
+		}
 	}
 	ConfigFile.close();
 
+
 	if (ValueToChange == "MicrophoneOutput")
 		Configs->MicrophoneOutput = NewValue;
-
 	if (ValueToChange == "PlaybackOutput")
 		Configs->PlaybackOutput = NewValue;
+	if (ValueToChange == "MidiPortName")
+		Configs->MidiPortName = NewValue;
+	if (ValueToChange == "MidiPort")
+		Configs->MidiPort = std::stoi(NewValue);
 
 	return 0;
 }
 
 void loadConfig()
 {
-	std::string Line;
-	std::string Variable;
-	std::string Value;
+	std::string Line, Variable, Value;
 	std::ifstream ConfigFileIn;
 
 	ConfigFileIn.open(ConfigPath);
@@ -161,6 +168,8 @@ void loadConfig()
 			Configs->PlayLastSound = std::stoi(Value);
 		if (Variable == "MidiPort" && Value != "")
 			Configs->MidiPort = std::stoi(Value);
+		if (Variable == "MidiPortName")
+			Configs->MidiPortName = Value.c_str();
 	}
 	ConfigFileIn.close();
 }

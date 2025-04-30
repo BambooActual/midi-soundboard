@@ -25,6 +25,7 @@ struct ConfigurationVariables
 	int PlayLastSound = -1;
 
 	int MidiPort = 1;
+	std::string MidiPortName = "";
 };
 extern struct ConfigurationVariables *Configs;
 // #endif

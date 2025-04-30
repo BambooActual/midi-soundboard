@@ -15,6 +15,10 @@ extern struct ConfigurationVariables *Configs;
 // extern int PortCount;
 
 
+void openPort();
+
+std::vector<std::string> getMidiPortNames();
+
 void startMidiReader();
 
 int awaitInput();
