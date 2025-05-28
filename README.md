@@ -2,6 +2,10 @@
 A simple Soundboard for linux designed to be used with a Midi input device. 
 This is my first c++ project so unoptimized and barely functional code is to be expected.
 
+## Insallation
+Extract files to desired directory and navigate there. Then run the command ``` make soundboard ```.
+Now you should be able to run the soundboard with ``` ./soudboard ``` in the installation directory.
+
 ## Dependencies
 The Soundboard uses libvlc to play sounds, so at it's current state vlc is required for it to function.
 
